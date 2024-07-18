@@ -6,7 +6,12 @@ const client = new Client({
     puppeteer: { 
         // args: ['--proxy-server=proxy-server-that-requires-authentication.example.com'],
         headless: false,
-    }
+    },
+    pairWithPhoneNumber: {
+        phoneNumber: "112104546206",
+        showNotification: true,
+        intervalMs: 180000
+    },
 });
 
 // client initialize does not finish at ready now.
@@ -16,19 +21,23 @@ client.on('loading_screen', (percent, message) => {
     console.log('LOADING SCREEN', percent, message);
 });
 
+client.on('code', (code) => {
+    console.log("Linking code:",code);
+});
+
 // Pairing code only needs to be requested once
-let pairingCodeRequested = false;
+// let pairingCodeRequested = false;
 client.on('qr', async (qr) => {
     // NOTE: This event will not be fired if a session is specified.
     console.log('QR RECEIVED', qr);
 
-    // paiuting code example
-    const pairingCodeEnabled = false;
-    if (pairingCodeEnabled && !pairingCodeRequested) {
-        const pairingCode = await client.requestPairingCode('96170100100'); // enter the target phone number
-        console.log('Pairing code enabled, code: '+ pairingCode);
-        pairingCodeRequested = true;
-    }
+    // // paiuting code example
+    // const pairingCodeEnabled = false;
+    // if (pairingCodeEnabled && !pairingCodeRequested) {
+    //     const pairingCode = await client.requestPairingCode('96170100100'); // enter the target phone number
+    //     console.log('Pairing code enabled, code: '+ pairingCode);
+    //     pairingCodeRequested = true;
+    // }
 });
 
 client.on('authenticated', () => {
